@@ -3,7 +3,7 @@ import Aux from "../../hoc/Auxiliary";
 import Burger from "../../components/Burger/Burger";
 import BurgerControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
-import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
+import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 
 const ITEM_PRICES = {
   salad: 0.5,
@@ -22,7 +22,7 @@ class BurgerBuilder extends Component {
     },
     totalPrice: 4,
     purchasable: false,
-    purchasing:false,
+    purchasing: false,
   };
   addIngredientHandler = (type) => {
     const oldCount = this.state.ingredients[type];
@@ -62,14 +62,22 @@ class BurgerBuilder extends Component {
       })
       .reduce((sum, el) => {
         return sum + el;
-      });
+      }, 0);
     this.setState({
       purchasable: sum > 0,
     });
   };
-  purchasehandler=()=>{
-      this.setState({purchasing:true});
-  }
+  purchasehandler = () => {
+    this.setState({ purchasing: true });
+  };
+  purchaseCancelHandler = () => {
+    this.setState({ purchasing: false });
+  };
+
+  purchaseContinueHandler = () => {
+    alert("You continue!");
+  };
+
   render() {
     const disabledInfo = {
       ...this.state.ingredients,
@@ -80,9 +88,16 @@ class BurgerBuilder extends Component {
 
     return (
       <Aux>
-          <Modal show={this.state.purchasing}>
-              <OrderSummary ingredients={this.state.ingredients} />
-          </Modal>
+        <Modal
+          show={this.state.purchasing}
+          modalClosed={this.purchaseCancelHandler}
+        >
+          <OrderSummary
+            ingredients={this.state.ingredients}
+            purchaseCancelled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler}
+          />
+        </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BurgerControls
           ingredientAdded={this.addIngredientHandler}
@@ -90,7 +105,7 @@ class BurgerBuilder extends Component {
           disabled={disabledInfo}
           purchasable={this.state.purchasable}
           price={this.state.totalPrice}
-          purchasing={()=>this.purchasehandler()}
+          purchasing={() => this.purchasehandler()}
         />
       </Aux>
     );
